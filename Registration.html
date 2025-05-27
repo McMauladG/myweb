@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #218838;
+        }
+        .search-group {
+            margin-top: 30px;
+        }
+        .search-group input {
+            width: calc(100% - 80px);
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .search-group button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .search-group button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .result-item button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .result-item button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registration Form</h1>
+        <div class="form-group">
+            <label for="idnum">ID Number:</label>
+            <input type="text" id="idnum" required>
+        </div>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="sex">Sex:</label>
+            <select id="sex" required>
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <input type="number" id="age" required>
+        </div>
+        <div class="form-group">
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" required>
+        </div>
+        <div class="form-group">
+            <label for="pob">Place of Birth:</label>
+            <input type="text" id="pob" required>
+        </div>
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" id="address" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+        </div>
+        <div class="form-group">
+            <button onclick="register()">Register</button>
+        </div>
+        <div class="search-group">
+            <input type="text" id="search" placeholder="Search by name">
+            <button onclick="search()">Search</button>
+        </div>
+        <div class="results" id="results"></div>
+    </div>
+    <script>
+        function register() {
+            const idnum = document.getElementById('idnum').value;
+            const name = document.getElementById('name').value;
+            const sex = document.getElementById('sex').value;
+            const age = document.getElementById('age').value;
+            const dob = document.getElementById('dob').value;
+            const pob = document.getElementById('pob').value;
+            const address = document.getElementById('address').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const data = { idnum, name, sex, age, dob, pob, address, phone, email };
+
+            // Save data to local storage
+            let registrations = JSON.parse(localStorage.getItem('registrations')) || [];
+            registrations.push(data);
+            localStorage.setItem('registrations', JSON.stringify(registrations));
+
+            // Save to CSV
+            saveToCSV(registrations);
+
+            alert('Registration successful!');
+            document.getElementById('idnum').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('sex').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('dob').value = '';
+            document.getElementById('pob').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+        }
+
+        function saveToCSV(data) {
+            const csvContent = "data:text/csv;charset=utf-8," + 
+                data.map(e => `${e.idnum},${e.name},${e.sex},${e.age},${e.dob},${e.pob},${e.address},${e.phone},${e.email}`).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "registrations.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function search() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const registrations = JSON.parse(localStorage.getItem('registrations')) || [];
+            const results = registrations.filter(r => r.name.toLowerCase().includes(searchTerm));
+            displayResults(results);
+        }
+
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            if (results.length > 0) {
+                results.forEach((r, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    div.innerHTML = `
+                        ID: ${r.idnum}, Name: ${r.name}, Sex: ${r.sex}, Age:
+                        ${r.age}, DOB: ${r.dob}, POB: ${r.pob}, Address:
+                        ${r.address}, Phone: ${r.phone}, Email: ${r.email}
+                        <button onclick="deleteRegistration(${index})">Delete</button>
+                    `;
+                    resultsDiv.appendChild(div);
+                });
+            } else {
+                resultsDiv.textContent = 'No results found';
+            }
+        }
+
+        function deleteRegistration(index) {
+            let registrations = JSON.parse(localStorage.getItem('registrations')) || [];
+            registrations.splice(index, 1);
+            localStorage.setItem('registrations', JSON.stringify(registrations));
+            search();  // Refresh the search results to reflect the deletion
+        }
+        
+    </script>
+</body>
+</html>
+

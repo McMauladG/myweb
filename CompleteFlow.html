@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Registration & Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        form {
+            margin: 20px auto;
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Registration & Login</h1>
+    
+    <!-- Registration Form -->
+    <h2>Registration</h2>
+    <form id="registrationForm" onsubmit="return registerUser()">
+        <input type="text" id="regUsername" placeholder="Enter a Username" required>
+        <input type="password" id="regPassword" placeholder="Enter a Password" required>
+        <button type="submit">Register</button>
+    </form>
+
+    <!-- Login Form -->
+    <h2>Login</h2>
+    <form id="loginForm" style="display: none;" onsubmit="return loginUser()">
+        <input type="text" id="loginUsername" placeholder="Username" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        function registerUser() {
+            var username = document.getElementById("regUsername").value;
+            var password = document.getElementById("regPassword").value;
+
+            alert("Registration successful! Proceed to login with your registered credentials.");
+            document.getElementById("registrationForm").style.display = "none";
+            document.getElementById("loginForm").style.display = "block";
+            return false; // Prevent the form from actually submitting
+        }
+
+        function loginUser() {
+            var username = document.getElementById("loginUsername").value;
+            var password = document.getElementById("loginPassword").value;
+
+            if (username === "admin" && password === "password") {
+                alert("Login successful! Redirecting to main page...");
+                window.location.href = "mainPage.html"; // Redirect to the main page
+            } else {
+                alert("Invalid username or password");
+            }
+
+            return false; // Prevent the form from actually submitting
+        }
+    </script>
+</body>
+</html>
